@@ -37,5 +37,5 @@ service CartService{
     rpc Get(CartRequest)returns(stream AddToCartResponse);
     rpc AddtoCart(AddTOCartRequest) returns(AddToCartResponse);
     rpc Delete(AddTOCartRequest)returns(AddToCartResponse);
-    rpc UpdateQuantity(CartRequest)returns(CartResponse);
+    rpc UpdateQuantity(UpdateQuantityRequest)returns(CartResponse);
 }

@@ -10,8 +10,10 @@ service ProductService {
     rpc Add (ProductRequest) returns (ProductResponse);
     rpc Update(UpdateProductRequest) returns(ProductResponse);
     rpc Delete(ProductIdRequest)returns (SuccessResponse);
-    rpc GetAll(google.protobuf.Empty)returns(stream ProductResponse);
+    rpc GetAll(google.protobuf.Empty)returns(stream ProductResponse){}
+    rpc GetMultiple(ProductMultipleRequest)returns(stream ProductMultipleResponse){}
 }
+
 message ProductIdRequest{
     uint64 Id =1;
 }
@@ -41,4 +43,10 @@ message UpdateProductRequest{
 }
 message SuccessResponse{
     string msg = 1;
+}
+message ProductMultipleRequest {
+    repeated ProductIdRequest ids = 1;
+}
+message ProductMultipleResponse{
+    repeated ProductResponse  multipleresponse =1;
 }

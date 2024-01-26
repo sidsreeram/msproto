@@ -28,6 +28,7 @@ type ProductServiceClient interface {
 	Update(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*ProductResponse, error)
 	Delete(ctx context.Context, in *ProductIdRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 	GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (ProductService_GetAllClient, error)
+	GetMultiple(ctx context.Context, in *ProductMultipleRequest, opts ...grpc.CallOption) (ProductService_GetMultipleClient, error)
 }
 
 type productServiceClient struct {
@@ -106,6 +107,38 @@ func (x *productServiceGetAllClient) Recv() (*ProductResponse, error) {
 	return m, nil
 }
 
+func (c *productServiceClient) GetMultiple(ctx context.Context, in *ProductMultipleRequest, opts ...grpc.CallOption) (ProductService_GetMultipleClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ProductService_ServiceDesc.Streams[1], "/product.ProductService/GetMultiple", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &productServiceGetMultipleClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ProductService_GetMultipleClient interface {
+	Recv() (*ProductMultipleResponse, error)
+	grpc.ClientStream
+}
+
+type productServiceGetMultipleClient struct {
+	grpc.ClientStream
+}
+
+func (x *productServiceGetMultipleClient) Recv() (*ProductMultipleResponse, error) {
+	m := new(ProductMultipleResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility
@@ -115,6 +148,7 @@ type ProductServiceServer interface {
 	Update(context.Context, *UpdateProductRequest) (*ProductResponse, error)
 	Delete(context.Context, *ProductIdRequest) (*SuccessResponse, error)
 	GetAll(*emptypb.Empty, ProductService_GetAllServer) error
+	GetMultiple(*ProductMultipleRequest, ProductService_GetMultipleServer) error
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -136,6 +170,9 @@ func (UnimplementedProductServiceServer) Delete(context.Context, *ProductIdReque
 }
 func (UnimplementedProductServiceServer) GetAll(*emptypb.Empty, ProductService_GetAllServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (UnimplementedProductServiceServer) GetMultiple(*ProductMultipleRequest, ProductService_GetMultipleServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetMultiple not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 
@@ -243,6 +280,27 @@ func (x *productServiceGetAllServer) Send(m *ProductResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _ProductService_GetMultiple_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ProductMultipleRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ProductServiceServer).GetMultiple(m, &productServiceGetMultipleServer{stream})
+}
+
+type ProductService_GetMultipleServer interface {
+	Send(*ProductMultipleResponse) error
+	grpc.ServerStream
+}
+
+type productServiceGetMultipleServer struct {
+	grpc.ServerStream
+}
+
+func (x *productServiceGetMultipleServer) Send(m *ProductMultipleResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -271,6 +329,11 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetAll",
 			Handler:       _ProductService_GetAll_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetMultiple",
+			Handler:       _ProductService_GetMultiple_Handler,
 			ServerStreams: true,
 		},
 	},

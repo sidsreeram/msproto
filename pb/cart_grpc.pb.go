@@ -26,7 +26,7 @@ type CartServiceClient interface {
 	Get(ctx context.Context, in *CartRequest, opts ...grpc.CallOption) (CartService_GetClient, error)
 	AddtoCart(ctx context.Context, in *AddTOCartRequest, opts ...grpc.CallOption) (*AddToCartResponse, error)
 	Delete(ctx context.Context, in *AddTOCartRequest, opts ...grpc.CallOption) (*AddToCartResponse, error)
-	UpdateQuantity(ctx context.Context, in *CartRequest, opts ...grpc.CallOption) (*CartResponse, error)
+	UpdateQuantity(ctx context.Context, in *UpdateQuantityRequest, opts ...grpc.CallOption) (*CartResponse, error)
 }
 
 type cartServiceClient struct {
@@ -96,7 +96,7 @@ func (c *cartServiceClient) Delete(ctx context.Context, in *AddTOCartRequest, op
 	return out, nil
 }
 
-func (c *cartServiceClient) UpdateQuantity(ctx context.Context, in *CartRequest, opts ...grpc.CallOption) (*CartResponse, error) {
+func (c *cartServiceClient) UpdateQuantity(ctx context.Context, in *UpdateQuantityRequest, opts ...grpc.CallOption) (*CartResponse, error) {
 	out := new(CartResponse)
 	err := c.cc.Invoke(ctx, "/pb.CartService/UpdateQuantity", in, out, opts...)
 	if err != nil {
@@ -113,7 +113,7 @@ type CartServiceServer interface {
 	Get(*CartRequest, CartService_GetServer) error
 	AddtoCart(context.Context, *AddTOCartRequest) (*AddToCartResponse, error)
 	Delete(context.Context, *AddTOCartRequest) (*AddToCartResponse, error)
-	UpdateQuantity(context.Context, *CartRequest) (*CartResponse, error)
+	UpdateQuantity(context.Context, *UpdateQuantityRequest) (*CartResponse, error)
 	mustEmbedUnimplementedCartServiceServer()
 }
 
@@ -133,7 +133,7 @@ func (UnimplementedCartServiceServer) AddtoCart(context.Context, *AddTOCartReque
 func (UnimplementedCartServiceServer) Delete(context.Context, *AddTOCartRequest) (*AddToCartResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedCartServiceServer) UpdateQuantity(context.Context, *CartRequest) (*CartResponse, error) {
+func (UnimplementedCartServiceServer) UpdateQuantity(context.Context, *UpdateQuantityRequest) (*CartResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateQuantity not implemented")
 }
 func (UnimplementedCartServiceServer) mustEmbedUnimplementedCartServiceServer() {}
@@ -225,7 +225,7 @@ func _CartService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _CartService_UpdateQuantity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CartRequest)
+	in := new(UpdateQuantityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -237,7 +237,7 @@ func _CartService_UpdateQuantity_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/pb.CartService/UpdateQuantity",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CartServiceServer).UpdateQuantity(ctx, req.(*CartRequest))
+		return srv.(CartServiceServer).UpdateQuantity(ctx, req.(*UpdateQuantityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
