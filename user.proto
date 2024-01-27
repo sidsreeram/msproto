@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package  user;
+
+option go_package = "./pb";
+
+import "google/protobuf/empty.proto";
+
+message SignupRequest {
+    string name =1;
+    string email =2;
+    uint32 mobile =3;
+    string password = 4;
+}
+message UserResponse{
+    uint64 user_id =1;
+    string name =2;
+    string email =3;
+    uint32 mobile =4;
+    bool is_admin =5;
+
+}
+message LoginRequest{
+    string email =1;
+    string password = 2;
+    bool is_admin = 3;
+}
+message UserRequest{
+    uint64 id =1;
+}
+message SuccessResponse{
+    string msg =1;
+}
+message UsersResponse {
+    repeated UserResponse users = 1;
+}
+message AdminsResponse {
+    repeated UserResponse admins = 1;
+}
+
+service UserService {
+    rpc UserSignup(SignupRequest)returns (SuccessResponse);
+    rpc UserLogin(LoginRequest)returns (SuccessResponse);
+    rpc Getuser(UserRequest)returns(UserResponse);
+    rpc GetAdmin(UserRequest)returns(UserResponse);
+    rpc GetAllUsers(google.protobuf.Empty)returns(stream UserResponse) {}
+    rpc GetAllAdmins(google.protobuf.Empty)returns(stream UserResponse) {}
+    rpc AddAdmin(SignupRequest)returns(UserResponse);
+
+}
