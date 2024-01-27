@@ -26,7 +26,7 @@ type CartServiceClient interface {
 	Get(ctx context.Context, in *CartRequest, opts ...grpc.CallOption) (CartService_GetClient, error)
 	AddtoCart(ctx context.Context, in *AddTOCartRequest, opts ...grpc.CallOption) (*AddToCartResponse, error)
 	Delete(ctx context.Context, in *AddTOCartRequest, opts ...grpc.CallOption) (*AddToCartResponse, error)
-	UpdateQuantity(ctx context.Context, in *UpdateQuantityRequest, opts ...grpc.CallOption) (*CartResponse, error)
+	UpdateQuantity(ctx context.Context, in *UpdateQuantityRequest, opts ...grpc.CallOption) (*AddToCartResponse, error)
 }
 
 type cartServiceClient struct {
@@ -96,8 +96,8 @@ func (c *cartServiceClient) Delete(ctx context.Context, in *AddTOCartRequest, op
 	return out, nil
 }
 
-func (c *cartServiceClient) UpdateQuantity(ctx context.Context, in *UpdateQuantityRequest, opts ...grpc.CallOption) (*CartResponse, error) {
-	out := new(CartResponse)
+func (c *cartServiceClient) UpdateQuantity(ctx context.Context, in *UpdateQuantityRequest, opts ...grpc.CallOption) (*AddToCartResponse, error) {
+	out := new(AddToCartResponse)
 	err := c.cc.Invoke(ctx, "/pb.CartService/UpdateQuantity", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ type CartServiceServer interface {
 	Get(*CartRequest, CartService_GetServer) error
 	AddtoCart(context.Context, *AddTOCartRequest) (*AddToCartResponse, error)
 	Delete(context.Context, *AddTOCartRequest) (*AddToCartResponse, error)
-	UpdateQuantity(context.Context, *UpdateQuantityRequest) (*CartResponse, error)
+	UpdateQuantity(context.Context, *UpdateQuantityRequest) (*AddToCartResponse, error)
 	mustEmbedUnimplementedCartServiceServer()
 }
 
@@ -133,7 +133,7 @@ func (UnimplementedCartServiceServer) AddtoCart(context.Context, *AddTOCartReque
 func (UnimplementedCartServiceServer) Delete(context.Context, *AddTOCartRequest) (*AddToCartResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedCartServiceServer) UpdateQuantity(context.Context, *UpdateQuantityRequest) (*CartResponse, error) {
+func (UnimplementedCartServiceServer) UpdateQuantity(context.Context, *UpdateQuantityRequest) (*AddToCartResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateQuantity not implemented")
 }
 func (UnimplementedCartServiceServer) mustEmbedUnimplementedCartServiceServer() {}
