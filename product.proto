@@ -11,7 +11,7 @@ service ProductService {
     rpc Update(UpdateProductRequest) returns(ProductResponse);
     rpc Delete(ProductIdRequest)returns (SuccessResponse);
     rpc GetAll(google.protobuf.Empty)returns(stream ProductResponse){}
-    rpc GetMultiple(ProductMultipleRequest)returns(stream ProductMultipleResponse){}
+    rpc GetMultiple(ProductMultipleRequest)returns(ProductMultipleResponse){}
 }
 
 message ProductIdRequest{

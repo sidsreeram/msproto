@@ -28,7 +28,7 @@ type ProductServiceClient interface {
 	Update(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*ProductResponse, error)
 	Delete(ctx context.Context, in *ProductIdRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 	GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (ProductService_GetAllClient, error)
-	GetMultiple(ctx context.Context, in *ProductMultipleRequest, opts ...grpc.CallOption) (ProductService_GetMultipleClient, error)
+	GetMultiple(ctx context.Context, in *ProductMultipleRequest, opts ...grpc.CallOption) (*ProductMultipleResponse, error)
 }
 
 type productServiceClient struct {
@@ -107,36 +107,13 @@ func (x *productServiceGetAllClient) Recv() (*ProductResponse, error) {
 	return m, nil
 }
 
-func (c *productServiceClient) GetMultiple(ctx context.Context, in *ProductMultipleRequest, opts ...grpc.CallOption) (ProductService_GetMultipleClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ProductService_ServiceDesc.Streams[1], "/product.ProductService/GetMultiple", opts...)
+func (c *productServiceClient) GetMultiple(ctx context.Context, in *ProductMultipleRequest, opts ...grpc.CallOption) (*ProductMultipleResponse, error) {
+	out := new(ProductMultipleResponse)
+	err := c.cc.Invoke(ctx, "/product.ProductService/GetMultiple", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &productServiceGetMultipleClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type ProductService_GetMultipleClient interface {
-	Recv() (*ProductMultipleResponse, error)
-	grpc.ClientStream
-}
-
-type productServiceGetMultipleClient struct {
-	grpc.ClientStream
-}
-
-func (x *productServiceGetMultipleClient) Recv() (*ProductMultipleResponse, error) {
-	m := new(ProductMultipleResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 // ProductServiceServer is the server API for ProductService service.
@@ -148,7 +125,7 @@ type ProductServiceServer interface {
 	Update(context.Context, *UpdateProductRequest) (*ProductResponse, error)
 	Delete(context.Context, *ProductIdRequest) (*SuccessResponse, error)
 	GetAll(*emptypb.Empty, ProductService_GetAllServer) error
-	GetMultiple(*ProductMultipleRequest, ProductService_GetMultipleServer) error
+	GetMultiple(context.Context, *ProductMultipleRequest) (*ProductMultipleResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -171,8 +148,8 @@ func (UnimplementedProductServiceServer) Delete(context.Context, *ProductIdReque
 func (UnimplementedProductServiceServer) GetAll(*emptypb.Empty, ProductService_GetAllServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
-func (UnimplementedProductServiceServer) GetMultiple(*ProductMultipleRequest, ProductService_GetMultipleServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetMultiple not implemented")
+func (UnimplementedProductServiceServer) GetMultiple(context.Context, *ProductMultipleRequest) (*ProductMultipleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMultiple not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 
@@ -280,25 +257,22 @@ func (x *productServiceGetAllServer) Send(m *ProductResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _ProductService_GetMultiple_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ProductMultipleRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _ProductService_GetMultiple_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProductMultipleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(ProductServiceServer).GetMultiple(m, &productServiceGetMultipleServer{stream})
-}
-
-type ProductService_GetMultipleServer interface {
-	Send(*ProductMultipleResponse) error
-	grpc.ServerStream
-}
-
-type productServiceGetMultipleServer struct {
-	grpc.ServerStream
-}
-
-func (x *productServiceGetMultipleServer) Send(m *ProductMultipleResponse) error {
-	return x.ServerStream.SendMsg(m)
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetMultiple(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/product.ProductService/GetMultiple",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetMultiple(ctx, req.(*ProductMultipleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
@@ -324,16 +298,15 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Delete",
 			Handler:    _ProductService_Delete_Handler,
 		},
+		{
+			MethodName: "GetMultiple",
+			Handler:    _ProductService_GetMultiple_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GetAll",
 			Handler:       _ProductService_GetAll_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "GetMultiple",
-			Handler:       _ProductService_GetMultiple_Handler,
 			ServerStreams: true,
 		},
 	},
