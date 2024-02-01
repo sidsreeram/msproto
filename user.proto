@@ -30,6 +30,7 @@ message UserRequest{
 }
 message SuccessResponse{
     string msg =1;
+    uint64 userid = 2;
 }
 message UsersResponse {
     repeated UserResponse users = 1;
