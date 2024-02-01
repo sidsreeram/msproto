@@ -26,7 +26,7 @@ type ProductServiceClient interface {
 	Get(ctx context.Context, in *ProductIdRequest, opts ...grpc.CallOption) (*ProductResponse, error)
 	Add(ctx context.Context, in *ProductRequest, opts ...grpc.CallOption) (*ProductResponse, error)
 	Update(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*ProductResponse, error)
-	Delete(ctx context.Context, in *ProductIdRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
+	Delete(ctx context.Context, in *ProductIdRequest, opts ...grpc.CallOption) (*ProductSuccessResponse, error)
 	GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (ProductService_GetAllClient, error)
 	GetMultiple(ctx context.Context, in *ProductMultipleRequest, opts ...grpc.CallOption) (*ProductMultipleResponse, error)
 }
@@ -66,8 +66,8 @@ func (c *productServiceClient) Update(ctx context.Context, in *UpdateProductRequ
 	return out, nil
 }
 
-func (c *productServiceClient) Delete(ctx context.Context, in *ProductIdRequest, opts ...grpc.CallOption) (*SuccessResponse, error) {
-	out := new(SuccessResponse)
+func (c *productServiceClient) Delete(ctx context.Context, in *ProductIdRequest, opts ...grpc.CallOption) (*ProductSuccessResponse, error) {
+	out := new(ProductSuccessResponse)
 	err := c.cc.Invoke(ctx, "/product.ProductService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -123,7 +123,7 @@ type ProductServiceServer interface {
 	Get(context.Context, *ProductIdRequest) (*ProductResponse, error)
 	Add(context.Context, *ProductRequest) (*ProductResponse, error)
 	Update(context.Context, *UpdateProductRequest) (*ProductResponse, error)
-	Delete(context.Context, *ProductIdRequest) (*SuccessResponse, error)
+	Delete(context.Context, *ProductIdRequest) (*ProductSuccessResponse, error)
 	GetAll(*emptypb.Empty, ProductService_GetAllServer) error
 	GetMultiple(context.Context, *ProductMultipleRequest) (*ProductMultipleResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
@@ -142,7 +142,7 @@ func (UnimplementedProductServiceServer) Add(context.Context, *ProductRequest) (
 func (UnimplementedProductServiceServer) Update(context.Context, *UpdateProductRequest) (*ProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedProductServiceServer) Delete(context.Context, *ProductIdRequest) (*SuccessResponse, error) {
+func (UnimplementedProductServiceServer) Delete(context.Context, *ProductIdRequest) (*ProductSuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedProductServiceServer) GetAll(*emptypb.Empty, ProductService_GetAllServer) error {

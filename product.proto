@@ -9,7 +9,7 @@ service ProductService {
     rpc Get (ProductIdRequest) returns (ProductResponse);
     rpc Add (ProductRequest) returns (ProductResponse);
     rpc Update(UpdateProductRequest) returns(ProductResponse);
-    rpc Delete(ProductIdRequest)returns (SuccessResponse);
+    rpc Delete(ProductIdRequest)returns (ProductSuccessResponse);
     rpc GetAll(google.protobuf.Empty)returns(stream ProductResponse){}
     rpc GetMultiple(ProductMultipleRequest)returns(ProductMultipleResponse){}
 }
@@ -41,7 +41,7 @@ message UpdateProductRequest{
     bool increased = 4;
 
 }
-message SuccessResponse{
+message ProductSuccessResponse{
     string msg = 1;
 }
 message ProductMultipleRequest {

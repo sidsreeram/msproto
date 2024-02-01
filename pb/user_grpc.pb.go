@@ -23,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
-	UserSignup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
-	UserLogin(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
+	UserSignup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*UserSuccessResponse, error)
+	UserLogin(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserSuccessResponse, error)
 	Getuser(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	GetAdmin(ctx context.Context, in *UserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	GetAllUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (UserService_GetAllUsersClient, error)
@@ -40,8 +40,8 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 	return &userServiceClient{cc}
 }
 
-func (c *userServiceClient) UserSignup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SuccessResponse, error) {
-	out := new(SuccessResponse)
+func (c *userServiceClient) UserSignup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*UserSuccessResponse, error) {
+	out := new(UserSuccessResponse)
 	err := c.cc.Invoke(ctx, "/user.UserService/UserSignup", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -49,8 +49,8 @@ func (c *userServiceClient) UserSignup(ctx context.Context, in *SignupRequest, o
 	return out, nil
 }
 
-func (c *userServiceClient) UserLogin(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*SuccessResponse, error) {
-	out := new(SuccessResponse)
+func (c *userServiceClient) UserLogin(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*UserSuccessResponse, error) {
+	out := new(UserSuccessResponse)
 	err := c.cc.Invoke(ctx, "/user.UserService/UserLogin", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -153,8 +153,8 @@ func (c *userServiceClient) AddAdmin(ctx context.Context, in *SignupRequest, opt
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
-	UserSignup(context.Context, *SignupRequest) (*SuccessResponse, error)
-	UserLogin(context.Context, *LoginRequest) (*SuccessResponse, error)
+	UserSignup(context.Context, *SignupRequest) (*UserSuccessResponse, error)
+	UserLogin(context.Context, *LoginRequest) (*UserSuccessResponse, error)
 	Getuser(context.Context, *UserRequest) (*UserResponse, error)
 	GetAdmin(context.Context, *UserRequest) (*UserResponse, error)
 	GetAllUsers(*emptypb.Empty, UserService_GetAllUsersServer) error
@@ -167,10 +167,10 @@ type UserServiceServer interface {
 type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) UserSignup(context.Context, *SignupRequest) (*SuccessResponse, error) {
+func (UnimplementedUserServiceServer) UserSignup(context.Context, *SignupRequest) (*UserSuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserSignup not implemented")
 }
-func (UnimplementedUserServiceServer) UserLogin(context.Context, *LoginRequest) (*SuccessResponse, error) {
+func (UnimplementedUserServiceServer) UserLogin(context.Context, *LoginRequest) (*UserSuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserLogin not implemented")
 }
 func (UnimplementedUserServiceServer) Getuser(context.Context, *UserRequest) (*UserResponse, error) {
