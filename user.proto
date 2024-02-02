@@ -28,11 +28,11 @@ message LoginRequest{
 message UserRequest{
     uint64 id =1;
 }
-message UserSuccessResponse{
-    string msg =1;
-    uint64 userid = 2;
-    bool isadmin =3;
-}
+// message UserSuccessResponse{
+//     string msg =1;
+//     uint64 userid = 2;
+//     bool isadmin =3;
+// }
 message UsersResponse {
     repeated UserResponse users = 1;
 }
@@ -41,8 +41,8 @@ message AdminsResponse {
 }
 
 service UserService {
-    rpc UserSignup(SignupRequest)returns (UserSuccessResponse);
-    rpc UserLogin(LoginRequest)returns (UserSuccessResponse);
+    rpc UserSignup(SignupRequest)returns (UserResponse);
+    rpc UserLogin(LoginRequest)returns (UserResponse);
     rpc Getuser(UserRequest)returns(UserResponse);
     rpc GetAdmin(UserRequest)returns(UserResponse);
     rpc GetAllUsers(google.protobuf.Empty)returns(stream UserResponse) {}
