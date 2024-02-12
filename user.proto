@@ -13,7 +13,7 @@ message SignupRequest {
     string password = 4;
 }
 message UserResponse{
-    uint64 user_id =1;
+    uint64 id =1;
     string name =2;
     string email =3;
     uint32 mobile =4;
